@@ -5,6 +5,8 @@ import re
 
 
 class Logger:
+    """The logger to be used for logging system events."""
+
     logger = None
 
     @classmethod
@@ -40,26 +42,51 @@ class Logger:
 
     @staticmethod
     def log_error(message):
+        """Logs an error message.
+
+        Args:
+            message (str): the message to be logged.
+        """
         Logger.setup_logger()
         Logger.logger.error(message)
 
     @staticmethod
     def log_warning(message):
+        """Logs a warning message.
+
+        Args:
+            message (str): the message to be logged.
+        """
         Logger.setup_logger()
         Logger.logger.warning(message)
 
     @staticmethod
     def log_info(message):
+        """Logs an info message.
+
+        Args:
+            message (str): the message to be logged.
+        """
         Logger.setup_logger()
         Logger.logger.info(message)
 
     @staticmethod
     def log_debug(message):
+        """Logs a debug message.
+
+        Args:
+            message (str): the message to be logged.
+        """
         Logger.setup_logger()
         Logger.logger.debug(message)
 
     @staticmethod
     def log_critical(message):
+        """Logs a critical message.
+
+        Args:
+            message (str): the message to be logged.
+        """
         Logger.setup_logger()
         Logger.logger.critical(message)
 
