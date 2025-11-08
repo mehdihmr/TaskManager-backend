@@ -39,7 +39,7 @@ jobs:
         run: |
           source $VENV_DIR/bin/activate
           pip install ruff
-          ruff check src/ --fix --exit-non-zero-on-fix
+          ruff check app/ --fix --exit-non-zero-on-fix
 
   deploy:
     runs-on: ubuntu-latest
