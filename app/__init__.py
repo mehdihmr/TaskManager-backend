@@ -8,6 +8,11 @@ migrate = Migrate()
 
 
 def create_app():
+    """Creates a flask app with an SQL databse.
+
+    Returns:
+        Flask: A Flask app.
+    """
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS

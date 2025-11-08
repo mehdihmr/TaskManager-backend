@@ -5,7 +5,7 @@ exclude = ["venv", ".venv", "tests", ".pytest_cache", "__pycache__", ".ruff_cach
 
 [tool.ruff.lint]
 select = ["E", "F", "D", "N"]
-ignore = ["D203", "D213", "D401", "D107", "D100", "D415", "D202", "D413", "D205"]
+ignore = ["D203", "D213", "D401", "D107", "D100", "D415", "D202", "D413", "D205", "D104"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402"]
