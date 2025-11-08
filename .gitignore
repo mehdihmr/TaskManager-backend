@@ -1,1 +1,31 @@
-venv
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# SQLite database file
+*.db
+tasks.db
+
+# Migrations (optional, if you want to regenerate in prod)
+migrations/
+
+# Flask instance folder (if you use it)
+instance/
+
+# Pytest cache
+.pytest_cache/
+
+# VSCode settings
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
