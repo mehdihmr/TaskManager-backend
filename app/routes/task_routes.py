@@ -94,6 +94,7 @@ def update_status():
 
 @task_bp.route("/delete", methods=["POST"])
 def delete_task():
+    """Deletes a specifc task by id."""
     try:
         data: dict = request.get_json()
         id = data.get("id")
