@@ -19,7 +19,7 @@ class Logger:
 
         if cls.logger is None:
             cls.__delete_old_logs()
-            cls.logger = logging.getLogger("Candy-Machine")
+            cls.logger = logging.getLogger("Task-Manager")
 
             cls.logger.setLevel(logging.DEBUG)
 
@@ -93,7 +93,7 @@ class Logger:
     @staticmethod
     def __delete_old_logs():
         date_pattern = re.compile(r"(\d{4}-\d{2}-\d{2})")
-        logs_path = "src/utilities/Logger"
+        logs_path = "app/utilities/Logger"
         threshold = datetime.now() - timedelta(days=30)
 
         for filename in os.listdir(logs_path):
