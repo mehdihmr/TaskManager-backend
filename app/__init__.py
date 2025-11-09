@@ -25,7 +25,7 @@ def create_app():
 
     from app.routes.task_routes import task_bp
 
-    app.register_blueprint(task_bp, url_prefix="/api/tasks")
+    app.register_blueprint(task_bp)
     Logger.log_info(f"{__name__} - API Routes initialized.")
 
     return app
