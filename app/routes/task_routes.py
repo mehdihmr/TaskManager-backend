@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app import db
 from app.models.task import Task
 from app.models.enums.task_status import TaskStatus
+from app.models.enums.task_priority import TaskPriority
 from app.utilities import Logger
 
 task_bp = Blueprint("task_bp", __name__)
@@ -21,8 +22,10 @@ def get_tasks():
                             "id": t.id,
                             "title": t.title,
                             "description": t.description,
-                            "done": t.status.value,
+                            "status": t.status.value,
+                            "priority": t.priority.value,
                             "creation": t.creation_date,
+                            "comments": t.comments,
                         }
                         for t in tasks
                     ],
@@ -57,15 +60,19 @@ def add_task():
         return jsonify({"status": "error", "message": "Error adding task"}), 500
 
 
-@task_bp.route("/update-status", methods=["POST"])
+@task_bp.route("/update", methods=["POST"])
 def update_status():
     """Updates the status of a task."""
     try:
         data: dict = request.get_json()
         id = data.get("id")
         status = data.get("status")
+        title = data.get("title")
+        description = data.get("description")
+        priority = data.get("priority")
+        comment = data.get("comment")
 
-        if not all([id, status]):
+        if not id:
             Logger.log_error(f"{__name__} - Missing parameters.")
             return jsonify({"status": "error", "message": "Missing parameters."}), 400
 
@@ -74,14 +81,21 @@ def update_status():
             Logger.log_error(f"{__name__} - The task with ID '{id}' does not exits.")
             return jsonify({"status": "error", "message": f"The task with ID '{id}' does not exits."}), 404
 
-        task.status = TaskStatus(status)
+        if status:
+            task.status = TaskStatus(status)
+        if title:
+            task.title = title
+        if description:
+            task.description = description
+        if priority:
+            task.priority = TaskPriority(priority)
+        if comment:
+            task.comments.append(comment)
 
         db.session.commit()
-        Logger.log_info(f"{__name__} - Status of '{task.title}' was updated to '{task.status}'.")
+        Logger.log_info(f"{__name__} - Task '{task.title}' updated.")
         return (
-            jsonify(
-                {"status": "success", "message": f"Status of '{task.title}' was updated to '{task.status.value}'."}
-            ),
+            jsonify({"status": "success", "message": f"Task '{task.title}' updated."}),
             200,
         )
     except ValueError as e:
