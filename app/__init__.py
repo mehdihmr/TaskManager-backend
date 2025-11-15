@@ -26,8 +26,10 @@ def create_app():
     Logger.log_info(f"{__name__} - Database initialized.")
 
     from app.routes.task_routes import task_bp
+    from app.routes.comment_routes import comment_bp
 
     app.register_blueprint(task_bp)
+    app.register_blueprint(comment_bp)
     Logger.log_info(f"{__name__} - API Routes initialized.")
 
     return app
