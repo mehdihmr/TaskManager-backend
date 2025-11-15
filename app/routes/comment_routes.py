@@ -9,6 +9,7 @@ comment_bp = Blueprint("comment_bp", __name__)
 # todo not needed anymore
 @comment_bp.route("/comment/fetch", methods=["POST"])
 def fetch_comments():
+    """Fetches the comments of a task."""
     try:
         data: dict = request.get_json()
         id = data.get("id")
@@ -26,6 +27,7 @@ def fetch_comments():
 
 @comment_bp.route("/comment/delete", methods=["POST"])
 def delete_comment():
+    """Deletes a comment from a task."""
     try:
         data: dict = request.get_json()
         id = data.get("id")
@@ -51,6 +53,7 @@ def delete_comment():
 
 @comment_bp.route("/comment/update", methods=["POST"])
 def update_comment():
+    """Updates a comment from a task."""
     try:
         data: dict = request.get_json()
         id = data.get("id")
