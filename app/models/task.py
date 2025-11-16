@@ -6,11 +6,7 @@ from sqlalchemy.ext.mutable import MutableList
 
 
 class Task(db.Model):
-    """The task model.
-
-    Args:
-        db: The SQL database.
-    """
+    """The task model."""
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
