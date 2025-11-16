@@ -43,6 +43,9 @@ def login():
         Logger.log_error(f"{__name__} - Missing parameters.")
         return jsonify({"status": "error", "message": "Missing parameters."}), 400
     user: User = User.query.filter_by(username=username).first()
+    if not user:
+        user: User = User.query.filter_by(email=username).first()
+
     if not user or not user.check_password(password):
         Logger.log_error(f"{__name__} - Bad credentials.")
         return jsonify({"status": "error", "message": "Bad credentials."}), 401
