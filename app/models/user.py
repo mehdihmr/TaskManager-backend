@@ -11,6 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     verified = db.Column(db.Boolean, default=False)
+    profile_image = db.Column(db.String(255), nullable=True)
     tasks = db.relationship("Task", backref="user", lazy=True)
 
     def set_password(self, password):

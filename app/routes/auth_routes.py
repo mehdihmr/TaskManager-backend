@@ -55,34 +55,6 @@ def login():
     return jsonify({"status": "success", "access_token": access_token}), 200
 
 
-@auth_bp.route("/user/update-pass", methods=["POST"])
-@jwt_required()
-def update_pass():
-    # todo
-    """_summary_
-
-    Returns:
-        _type_: _description_
-    """
-    user_id = get_jwt_identity()
-    data: dict = request.get_json()
-    old_pass = data.get("old")
-    new_pass = data.get("new")
-
-    user: User = User.query.filter_by(id=user_id).first()
-    if not user:
-        Logger.log_error(f"{__name__} - Bad credentials.")
-        return jsonify({"status": "error", "message": "Bad credentials."}), 401
-
-    if not user.check_password(old_pass):
-        Logger.log_error(f"{__name__} - Password incorrect.")
-        return jsonify({"status": "error", "message": "Password is incorrect."}), 400
-
-    user.set_password(new_pass)
-    db.session.commit()
-    return jsonify({"status": "sucess", "message": "password updated"}), 200
-
-
 @auth_bp.route("/user/fetch-users", methods=["GET"])
 def fetch_users():
     """Fetch all users."""
@@ -106,16 +78,3 @@ def fetch_users():
         ),
         200,
     )
-
-
-@auth_bp.route("/user/profile", methods=["GET"])
-@jwt_required()
-def profile():
-    """Get the profile of the currently authenticated user."""
-    user_id = get_jwt_identity()
-    user: User = User.query.filter_by(id=user_id).first()
-    if not user:
-        Logger.log_error(f"{__name__} - Bad credentials.")
-        return jsonify({"status": "error", "message": "Bad credentials."}), 401
-
-    return jsonify({"status": "success", "user": {"username": user.username, "email": user.email}}), 200

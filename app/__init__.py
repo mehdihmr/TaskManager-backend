@@ -29,10 +29,12 @@ def create_app():
     from app.routes import task_bp
     from app.routes import comment_bp
     from app.routes import auth_bp
+    from app.routes import user_bp
 
     app.register_blueprint(task_bp)
     app.register_blueprint(comment_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(user_bp)
     Logger.log_info(f"{__name__} - API Routes initialized.")
 
     return app
