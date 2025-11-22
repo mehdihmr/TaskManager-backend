@@ -7,7 +7,7 @@ comment_bp = Blueprint("comment_bp", __name__)
 
 
 # todo not needed anymore
-@comment_bp.route("/comment/fetch", methods=["POST"])
+@comment_bp.route("/task/comment/fetch", methods=["POST"])
 def fetch_comments():
     """Fetches the comments of a task."""
     try:
@@ -25,7 +25,7 @@ def fetch_comments():
         return jsonify({"status": "error", "message": "Error fetching the comments."}), 500
 
 
-@comment_bp.route("/comment/delete", methods=["POST"])
+@comment_bp.route("/task/comment/delete", methods=["POST"])
 def delete_comment():
     """Deletes a comment from a task."""
     try:
@@ -51,7 +51,7 @@ def delete_comment():
         return jsonify({"status": "error", "message": "Error deleting the comment."}), 500
 
 
-@comment_bp.route("/comment/update", methods=["POST"])
+@comment_bp.route("/task/comment/update", methods=["POST"])
 def update_comment():
     """Updates a comment from a task."""
     try:

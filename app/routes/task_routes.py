@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.task import Task
+from app.models.user import User
 from app.models.enums.task_status import TaskStatus
 from app.models.enums.task_priority import TaskPriority
 from app.utilities import Logger
@@ -8,27 +10,26 @@ from app.utilities import Logger
 task_bp = Blueprint("task_bp", __name__)
 
 
-@task_bp.route("/fetch", methods=["GET"])
+@task_bp.route("/task/fetch", methods=["GET"])
+@jwt_required()
 def get_tasks():
     """Gets the tasks."""
     try:
-        tasks: list[Task] = Task.query.all()
+        user_id = get_jwt_identity()
+        if not user_id:
+            error_message = "Missing Authorization Header"
+            Logger.log_error(f"{__name__} - {error_message}")
+            return jsonify({"status": "error", "message": error_message}), 401
+
+        user: User = User.query.filter_by(id=user_id).first()
+        if not user:
+            Logger.log_error(f"{__name__} - Error fetching the tasks")
+            return jsonify({"status": "error", "message": "Error getching tht tasks"}), 400
         return (
             jsonify(
                 {
                     "status": "success",
-                    "tasks": [
-                        {
-                            "id": t.id,
-                            "title": t.title,
-                            "description": t.description,
-                            "status": t.status.value,
-                            "priority": t.priority.value,
-                            "creation": t.creation_date,
-                            "comments": t.comments,
-                        }
-                        for t in tasks
-                    ],
+                    "tasks": [t.to_dict() for t in user.tasks],
                 }
             ),
             200,
@@ -38,19 +39,22 @@ def get_tasks():
         return jsonify({"status": "error", "message": "Error querying the tasks."}), 500
 
 
-@task_bp.route("/add", methods=["POST"])
+@task_bp.route("/task/add", methods=["POST"])
+@jwt_required()
 def add_task():
     """Adds a new task."""
     try:
         data: dict = request.get_json()
         title = data.get("title")
         description = data.get("description", "")
+        user_id = get_jwt_identity()
+        print(user_id)
 
-        if not title:
+        if not all([title, user_id]):
             Logger.log_error(f"{__name__} - Missing parameters.")
             return jsonify({"status": "error", "message": "Missing parameters."}), 400
 
-        new_task = Task(title=title, description=description)
+        new_task = Task(title=title, description=description, user_id=user_id)
         db.session.add(new_task)
         db.session.commit()
         Logger.log_info(f"{__name__} - Task added")
@@ -60,7 +64,7 @@ def add_task():
         return jsonify({"status": "error", "message": "Error adding task"}), 500
 
 
-@task_bp.route("/update", methods=["POST"])
+@task_bp.route("/task/update", methods=["POST"])
 def update_status():
     """Updates the status of a task."""
     try:
@@ -106,7 +110,7 @@ def update_status():
         return jsonify({"status": "error", "message": "Error updating the status."}), 500
 
 
-@task_bp.route("/delete", methods=["POST"])
+@task_bp.route("/task/delete", methods=["POST"])
 def delete_task():
     """Deletes a specifc task by id."""
     try:

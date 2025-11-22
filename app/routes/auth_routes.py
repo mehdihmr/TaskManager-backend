@@ -8,7 +8,7 @@ from app import db
 auth_bp = Blueprint("auth", __name__)
 
 
-@auth_bp.route("/register", methods=["POST"])
+@auth_bp.route("/user/register", methods=["POST"])
 def register():
     """Register a new user."""
     try:
@@ -33,7 +33,7 @@ def register():
         return jsonify({"status": "error", "message": "Error registering user."}), 500
 
 
-@auth_bp.route("/login", methods=["POST"])
+@auth_bp.route("/user/login", methods=["POST"])
 def login():
     """Authenticate a user and return an access token."""
     data: dict = request.get_json()
@@ -50,12 +50,12 @@ def login():
         Logger.log_error(f"{__name__} - Bad credentials.")
         return jsonify({"status": "error", "message": "Bad credentials."}), 401
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
     Logger.log_info(f"{__name__} - {user.username} logged in.")
     return jsonify({"status": "success", "access_token": access_token}), 200
 
 
-@auth_bp.route("/fetch-users", methods=["GET"])
+@auth_bp.route("/user/fetch-users", methods=["GET"])
 def fetch_users():
     """Fetch all users."""
     users: list[User] = User.query.all()
@@ -64,7 +64,15 @@ def fetch_users():
         jsonify(
             {
                 "users": [
-                    {"id": u.id, "username": u.username, "email": u.email, "password": u.password_hash} for u in users
+                    {
+                        "id": u.id,
+                        "username": u.username,
+                        "email": u.email,
+                        "password": u.password_hash,
+                        "verified": u.verified,
+                        "tasks": [task.to_dict() for task in u.tasks],
+                    }
+                    for u in users
                 ]
             }
         ),
@@ -72,9 +80,14 @@ def fetch_users():
     )
 
 
-@auth_bp.route("/profile", methods=["GET"])
+@auth_bp.route("/user/profile", methods=["GET"])
 @jwt_required()
 def profile():
     """Get the profile of the currently authenticated user."""
     user_id = get_jwt_identity()
-    return jsonify({"user_id": user_id}), 200
+    user: User = User.query.filter_by(id=user_id).first()
+    if not user:
+        Logger.log_error(f"{__name__} - Bad credentials.")
+        return jsonify({"status": "error", "message": "Bad credentials."}), 401
+
+    return jsonify({"status": "success", "user": {"username": user.username, "email": user.email}}), 200
