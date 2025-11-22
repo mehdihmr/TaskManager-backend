@@ -26,7 +26,12 @@ class Task(db.Model):
         """
         return f"<Task {self.title}>"
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
+        """Gets the dictionary presentation of the task object.
+
+        Returns:
+            dict: The created dictionary (object).
+        """
         return {
             "id": self.id,
             "title": self.title,
